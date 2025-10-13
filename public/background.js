@@ -18,22 +18,44 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
+// Helper function to check if a URL is a new tab URL
+function isNewTabUrl(url) {
+  return (
+    url === "chrome://newtab/" ||
+    url === "about:blank" ||
+    url === "edge://newtab/" ||
+    url === "about:newtab" ||
+    url.includes("chrome://new-tab-page") ||
+    url.includes("edge://new-tab-page") ||
+    url.startsWith("chrome-extension://") // Extension new tab pages
+  );
+}
+
 // Listen for new tabs being created (fallback for browsers that don't respect chrome_url_overrides)
 chrome.tabs.onCreated.addListener((tab) => {
-  // Check if it's a new tab (no URL or chrome://newtab/)
-  if (!tab.url || tab.url === "chrome://newtab/" || tab.url === "about:blank" || tab.url.includes("chrome://new-tab-page")) {
-    chrome.storage.sync.get(["customUrl", "isEnabled"], (result) => {
-      const isEnabled = result.isEnabled !== undefined ? result.isEnabled : true;
-      const customUrl = result.customUrl || DEFAULT_SETTINGS.customUrl;
-      
-      if (isEnabled && customUrl && tab.id) {
-        // Small delay to ensure tab is ready
-        setTimeout(() => {
-          chrome.tabs.update(tab.id, { url: customUrl });
-        }, 100);
-      }
-    });
+  // If tab has a pendingUrl, it's opening with a specific destination - don't redirect
+  if (tab.pendingUrl && !isNewTabUrl(tab.pendingUrl)) {
+    return;
   }
+
+  // If tab has a URL that's not a new tab page, don't redirect
+  if (tab.url && !isNewTabUrl(tab.url)) {
+    return;
+  }
+
+  // This is a new empty tab - redirect it
+  chrome.storage.sync.get(["customUrl", "isEnabled"], (result) => {
+    const isEnabled = result.isEnabled !== undefined ? result.isEnabled : true;
+    const customUrl = result.customUrl || DEFAULT_SETTINGS.customUrl;
+
+    if (isEnabled && customUrl && typeof tab.id === "number") {
+      const tabId = tab.id;
+      // Small delay to ensure tab is ready
+      setTimeout(() => {
+        chrome.tabs.update(tabId, { url: customUrl });
+      }, 100);
+    }
+  });
 });
 
 // Handle messages from popup or other parts of the extension
