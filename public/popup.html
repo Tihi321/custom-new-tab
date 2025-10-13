@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom New Tab Settings</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Custom New Tab</h1>
+    
+    <div class="form-group">
+      <label for="url-input">Custom URL:</label>
+      <input 
+        type="text" 
+        id="url-input" 
+        placeholder="https://example.com"
+        spellcheck="false"
+      >
+    </div>
+    
+    <div class="button-group">
+      <button id="save-btn" class="btn primary">Save URL</button>
+      <button id="toggle-btn" class="btn">Toggle</button>
+    </div>
+    
+    <div id="status" class="status"></div>
+    
+    <div class="info">
+      <p>Enter a URL that will open when you create a new tab.</p>
+      <p>Use the toggle button to enable or disable the custom URL.</p>
+    </div>
+  </div>
+  <script src="popup-bundle.js"></script>
+</body>
+</html>
+ 

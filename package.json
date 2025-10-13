@@ -1,0 +1,21 @@
+{
+  "name": "custom-new-tab",
+  "description": "A Chrome extension that allows you to set a custom URL for new tabs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:Tihi321/custom-new-tab.git",
+  "author": "Tihomir Selak <tknox.dr@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc && yarn copy-files && yarn rename-files",
+    "copy-files": "copyfiles -u 1 \"public/**/*\" dist && copyfiles manifest.json dist",
+    "rename-files": "node -e \"const fs=require('fs');['popup','newtab'].forEach(f=>{const src='dist/'+f+'.js',dst='dist/'+f+'-bundle.js';if(fs.existsSync(src))fs.renameSync(src,dst);})\"",
+    "watch": "tsc --watch",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.260",
+    "copyfiles": "^2.4.1",
+    "typescript": "^5.3.3"
+  }
+}
