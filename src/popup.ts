@@ -1,17 +1,16 @@
 /// <reference types="chrome"/>
 
-// Make this file a module
-export {};
-
 // DOM elements
 const urlInput = document.getElementById("url-input") as HTMLInputElement;
 const saveBtn = document.getElementById("save-btn") as HTMLButtonElement;
 const toggleBtn = document.getElementById("toggle-btn") as HTMLButtonElement;
 const statusDiv = document.getElementById("status") as HTMLDivElement;
+const openOnClickCheckbox = document.getElementById("open-on-click") as HTMLInputElement;
 
 let currentSettings = {
   customUrl: "",
   isEnabled: true,
+  openOnIconClick: false,
 };
 
 // Load current settings
@@ -21,6 +20,7 @@ function loadSettings(): void {
       currentSettings = response;
       urlInput.value = response.customUrl;
       updateToggleButton(response.isEnabled);
+      openOnClickCheckbox.checked = response.openOnIconClick || false;
     }
   });
 }
@@ -81,6 +81,7 @@ saveBtn.addEventListener("click", () => {
       action: "saveSettings",
       customUrl: url,
       isEnabled: currentSettings.isEnabled,
+      openOnIconClick: currentSettings.openOnIconClick,
     },
     (response) => {
       if (response && response.success) {
@@ -101,11 +102,37 @@ toggleBtn.addEventListener("click", () => {
       action: "saveSettings",
       customUrl: currentSettings.customUrl,
       isEnabled: newState,
+      openOnIconClick: currentSettings.openOnIconClick,
     },
     (response) => {
       if (response && response.success) {
         updateToggleButton(newState);
         showStatus(newState ? "Custom URL enabled!" : "Custom URL disabled!");
+      } else {
+        showStatus("Failed to update setting", true);
+      }
+    }
+  );
+});
+
+// Toggle open on icon click
+openOnClickCheckbox.addEventListener("change", () => {
+  currentSettings.openOnIconClick = openOnClickCheckbox.checked;
+
+  chrome.runtime.sendMessage(
+    {
+      action: "saveSettings",
+      customUrl: currentSettings.customUrl,
+      isEnabled: currentSettings.isEnabled,
+      openOnIconClick: currentSettings.openOnIconClick,
+    },
+    (response) => {
+      if (response && response.success) {
+        showStatus(
+          currentSettings.openOnIconClick
+            ? "Extension icon will now open URL!"
+            : "Extension icon will show settings"
+        );
       } else {
         showStatus("Failed to update setting", true);
       }

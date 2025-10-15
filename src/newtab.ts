@@ -1,8 +1,5 @@
 /// <reference types="chrome"/>
 
-// Make this file a module
-export {};
-
 // Redirect to custom URL or show default page
 chrome.storage.sync.get(["customUrl", "isEnabled"], (result) => {
   const isEnabled = result.isEnabled !== undefined ? result.isEnabled : true;

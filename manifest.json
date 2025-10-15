@@ -1,13 +1,12 @@
 {
   "manifest_version": 3,
   "name": "Custom New Tab",
-  "version": "1.0.1",
-  "description": "Set a custom URL for new tabs with enable/disable toggle",
-  "permissions": ["storage", "tabs"],
+  "version": "1.1.0",
+  "description": "Set a custom URL for new tabs and optionally open it via extension icon",
+  "permissions": ["storage", "tabs", "contextMenus"],
   "action": {
     "default_icon": "icons/icon.svg",
-    "default_title": "Custom New Tab",
-    "default_popup": "popup.html"
+    "default_title": "Custom New Tab"
   },
   "background": {
     "service_worker": "background.js"
@@ -15,6 +14,7 @@
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },
+  "options_page": "popup.html",
   "icons": {
     "48": "icons/icon.svg",
     "128": "icons/icon.svg"
